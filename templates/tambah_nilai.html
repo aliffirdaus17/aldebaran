@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tambah Nilai Siswa</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #e0f7e9;
+            color: #1b3a2f;
+            padding: 40px;
+        }
+
+        form {
+            background: #ffffff;
+            max-width: 500px;
+            margin: auto;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,.15);
+        }
+
+        h2 {
+            text-align: center;
+            color: #1b5e20;
+            font-size: 1.9em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 3px #a5d6a7;
+        }
+
+        label {
+            font-weight: 600;
+            margin-top: 10px;
+            display: block;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px 12px;
+            margin-top: 6px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            border: 1px solid #81c784;
+            font-size: 14px;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #66bb6a;
+            box-shadow: 0 0 0 2px rgba(102,187,106,.3);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            background: linear-gradient(135deg, #66bb6a, #1b5e20);
+            color: #fff;
+            border-radius: 10px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: .3s;
+            border: none;
+            font-size: 15px;
+        }
+
+        button:hover {
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-batal {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            background: #ff3333;
+            color: #fff;
+            border-radius: 10px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: .3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,.25);
+            font-size: 15px;
+        }
+
+        .btn-batal:hover {
+            transform: translateY(-2px) scale(1.02);
+        }
+    </style>
+</head>
+<body>
+
+<form method="POST" action="{{ url_for('simpan_nilai_alif') }}">
+    <h2>Tambah Nilai Siswa</h2>
+
+    <label>Siswa</label>
+    <select name="nis" required>
+        <option value="">-- Pilih Siswa --</option>
+        {% for s in siswa %}
+            <option value="{{ s.nis }}">{{ s.nis }} - {{ s.Nama }}</option>
+        {% endfor %}
+    </select>
+
+    <label>Mata Pelajaran</label>
+    <select name="id_mapel" required>
+        <option value="">-- Pilih Mapel --</option>
+        {% for m in mapel %}
+            <option value="{{ m.id_mapel }}">{{ m.nama_mapel }}</option>
+        {% endfor %}
+    </select>
+
+    <label>Semester</label>
+    <select name="Semester" required>
+        <option value="">-- Pilih Semester --</option>
+        <option value="Ganjil">Ganjil</option>
+        <option value="Genap">Genap</option>
+    </select>
+
+    <label>Tahun Ajaran</label>
+    <input type="text" name="tahun" placeholder="2024/2025" required>
+
+    <label>Nilai Tugas</label>
+    <input type="number" name="nilai_tugas" min="0" max="100" required>
+
+    <label>Nilai UTS</label>
+    <input type="number" name="nilai_uts" min="0" max="100" required>
+
+    <label>Nilai UAS</label>
+    <input type="number" name="nilai_uas" min="0" max="100" required>
+
+    <label>Deskripsi</label>
+    <textarea name="deskripsi"></textarea>
+
+    <div class="btn-group">
+        <button type="submit">Simpan</button>
+        <a href="{{ url_for('index') }}" class="btn-batal" 
+           onclick="return confirm('Apakah Anda yakin ingin membatalkan? Semua data yang dimasukkan akan hilang.')">
+            Batal
+        </a>
+    </div>
+</form>
+
+</body>
+</html>

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Nilai Siswa</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #e0f7e9;
+            color: #1b3a2f;
+            margin: 30px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #1b5e20;
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 25px;
+            text-shadow: 1px 1px 3px #a5d6a7;
+        }
+
+        .tambah-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 12px 26px;
+            background: linear-gradient(135deg, #1b5e20, #66bb6a);
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,.25);
+            transition: .3s;
+        }
+
+        .tambah-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            background: linear-gradient(135deg, #66bb6a, #1b5e20);
+        }
+
+        .flash {
+            background: #a5d6a7;
+            color: #1b5e20;
+            padding: 12px 15px;
+            margin: 10px 0 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            box-shadow: 0 3px 8px rgba(0,0,0,.15);
+        }
+
+        /* Filter Section Styles */
+        .filter-container {
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.1);
+        }
+
+        .filter-grid {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .filter-grid input,
+        .filter-grid select {
+            padding: 8px 12px;
+            border: 1px solid #a5d6a7;
+            border-radius: 6px;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-filter, .btn-reset {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-filter {
+            background: #1b5e20;
+            color: #fff;
+        }
+
+        .btn-reset {
+            background: #757575;
+            color: #fff;
+        }
+
+        .result-count {
+            background: #c8e6c9;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-cetak-semua {
+            background: #1b5e20;
+            color: #fff;
+            padding: 6px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: .3s;
+        }
+
+        .btn-cetak-semua:hover {
+            background: #2e7d32;
+            transform: scale(1.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,.15);
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: center;
+        }
+
+        th {
+            background: #66bb6a;
+            color: #fff;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        tr:nth-child(even) { background: #c8e6c9; }
+        tr:hover { background: #a5d6a7; }
+
+        .aksi-btn {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-edit {
+            background: #2563eb;
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: .3s;
+        }
+
+        .btn-edit:hover {
+            background: #1d4ed8;
+            transform: scale(1.05);
+        }
+
+        .btn-hapus {
+            background: #dc2626;
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: .3s;
+        }
+
+        .btn-hapus:hover {
+            background: #b91c1c;
+            transform: scale(1.05);
+        }
+
+        .btn-pdf {
+            background: #374151;
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: .3s;
+        }
+
+        .btn-pdf:hover {
+            background: #111827;
+            transform: scale(1.05);
+        }
+
+        .no-results {
+            padding: 15px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Data Nilai Siswa</h2>
+<a href="{{ url_for('tambah_nilai_alif') }}" class="tambah-btn">
+    + Tambah Data
+</a>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+    {% for category, message in messages %}
+        <div class="flash">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+{% endwith %}
+
+<!-- Filter Section -->
+<div class="filter-container">
+    <form method="GET" action="{{ url_for('index') }}">
+        <div class="filter-grid">
+            <input 
+                type="text" 
+                name="nis" 
+                placeholder="NIS / Nama Siswa"
+                value="{{ request.args.get('nis', '') }}">
+            
+            <select name="mapel">
+                <option value="">Semua Mapel</option>
+                {% for mapel in mapel_list %}
+                <option value="{{ mapel }}" {% if request.args.get('mapel') == mapel %}selected{% endif %}>
+                    {{ mapel }}
+                </option>
+                {% endfor %}
+            </select>
+            
+            <select name="semester">
+                <option value="">Semua Semester</option>
+                <option value="Ganjil" {% if request.args.get('semester') == 'Ganjil' %}selected{% endif %}>Semester 1</option>
+                <option value="Genap" {% if request.args.get('semester') == 'Genap' %}selected{% endif %}>Semester 2</option>
+            </select>
+            
+            <select name="tahun">
+                <option value="">Semua Tahun</option>
+                {% for tahun in tahun_list %}
+                <option value="{{ tahun }}" {% if request.args.get('tahun') == tahun %}selected{% endif %}>
+                    {{ tahun }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="filter-buttons">
+            <button type="submit" class="btn-filter">Filter</button>
+            <a href="{{ url_for('index') }}" class="btn-reset" style="text-decoration: none; display: inline-flex; align-items: center;">Reset</a>
+        </div>
+    </form>
+</div>
+
+<!-- Result Count -->
+{% if siswa %}
+<div class="result-count">
+    Menampilkan {{ siswa|length }} data
+    {% if request.args.get('nis') or request.args.get('mapel') or request.args.get('semester') or request.args.get('tahun') %}
+        <a href="{{ url_for('cetak_semua_pdf', 
+            nis=request.args.get('nis', ''),
+            mapel=request.args.get('mapel', ''),
+            semester=request.args.get('semester', ''),
+            tahun=request.args.get('tahun', '')
+        ) }}" class="btn-cetak-semua">📄 Cetak Semua</a>
+    {% endif %}
+</div>
+{% endif %}
+
+<table>
+    <tr>
+        <th>Id Nilai</th>
+        <th>NIS</th>
+        <th>Nama</th>
+        <th>Nama Mapel</th>
+        <th>Tugas</th>
+        <th>UTS</th>
+        <th>UAS</th>
+        <th>Nilai Akhir</th>
+        <th>Deskripsi</th>
+        <th>Semester</th>
+        <th>Tahun Ajaran</th>
+        <th>Aksi</th>
+    </tr>
+
+    {% if siswa %}
+        {% for s in siswa %}
+        <tr>
+            <td>{{ s.id_nilai }}</td>
+            <td>{{ s.nis }}</td>
+            <td>{{ s.Nama }}</td>
+            <td>{{ s.nama_mapel }}</td>
+            <td>{{ s.nilai_tugas }}</td>
+            <td>{{ s.nilai_uts }}</td>
+            <td>{{ s.nilai_uas }}</td>
+            <td>{{ s.nilai_akhir }}</td>
+            <td>{{ s.Deskripsi }}</td>
+            <td>{{ s.Semester }}</td>
+            <td>{{ s.tahun_ajaran }}</td>
+            <td>
+                <div class="aksi-btn">
+                    <a href="{{ url_for(
+                        'edit_nilai_alif',
+                        nis=s.nis,
+                        mapel=s.nama_mapel,
+                        semester=s.Semester,
+                        tahun=s.tahun_ajaran
+                    ) }}" class="btn-edit">Edit</a>
+
+                    <a href="{{ url_for(
+                        'hapus_nilai_alif',
+                        nis=s.nis,
+                        mapel=s.nama_mapel,
+                        semester=s.Semester,
+                        tahun=s.tahun_ajaran
+                    ) }}"
+                    onclick="return confirm('Yakin ingin menghapus data ini?')"
+                    class="btn-hapus">Hapus</a>
+
+                    <a href="{{ url_for(
+                        'cetak_pdf',
+                        nis=s.nis,
+                        semester=s.Semester,
+                        tahun=s.tahun_ajaran
+                    ) }}" class="btn-pdf">Cetak</a>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    {% else %}
+        <tr>
+            <td colspan="12">
+                <div class="no-results">
+                    Data tidak ditemukan
+                </div>
+            </td>
+        </tr>
+    {% endif %}
+</table>
+
+</body>
+</html>
